@@ -1,0 +1,173 @@
+---
+title: "Preprocessing_KITE_EdU_Titration"
+output: html_notebook
+---
+```{bash}
+#Create mismatch
+python featuremap.py  whitelistFeatureBarcodesTop20.csv --header
+#Create kallisto index 
+cd ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020
+kallisto index -i FeaturesMismatch.idx -k 15 FeaturesMismatch.fa
+#Run Kallisto for pseudoalignment
+cd ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/NFW
+kallisto bus -i  FeaturesMismatch.idx -o output -x 10xv3 -t 4 030420_2-4FB_NFW_EdU_Titration_S36_L002_R2_001.fastq.gz \
+030420_2-4FB_NFW_EdU_Titration_S36_L002_R1_001.fastq.gz \
+030420_2-4FB_NFW_EdU_Titration_S36_L001_R1_001.fastq.gz \
+030420_2-4FB_NFW_EdU_Titration_S36_L001_R2_001.fastq.gz \
+030420_2-3FB_NFW_EdU_Titration_S35_L002_R1_001.fastq.gz \
+030420_2-3FB_NFW_EdU_Titration_S35_L002_R2_001.fastq.gz \
+030420_2-3FB_NFW_EdU_Titration_S35_L001_R1_001.fastq.gz \
+030420_2-3FB_NFW_EdU_Titration_S35_L001_R2_001.fastq.gz \
+030420_2-2FB_NFW_EdU_Titration_S34_L002_R2_001.fastq.gz \
+030420_2-2FB_NFW_EdU_Titration_S34_L002_R1_001.fastq.gz \
+030420_2-2FB_NFW_EdU_Titration_S34_L001_R2_001.fastq.gz \
+030420_2-2FB_NFW_EdU_Titration_S34_L001_R1_001.fastq.gz \
+030420_2-1FB_NFW_EdU_Titration_S33_L002_R2_001.fastq.gz \
+030420_2-1FB_NFW_EdU_Titration_S33_L002_R1_001.fastq.gz \
+030420_2-1FB_NFW_EdU_Titration_S33_L001_R2_001.fastq.gz \
+030420_2-1FB_NFW_EdU_Titration_S33_L001_R1_001.fastq.gz 
+
+cd output
+mv ~/Desktop/Preprocessing_materials_EdU/10xv3_whitelist.txt ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/NFW/output
+mv ~/Desktop/Preprocessing_materials_EdU/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/NFW/output
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+#Point to next files of fastqs
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/NFW/FeaturesMismatch.idx ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/10uM
+
+cd ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/10uM
+
+kallisto bus -i  FeaturesMismatch.idx -o output -x 10xv3 -t 4 030420_7-4FB_10uM_EdU_Titration_S56_L002_R2_001.fastq.gz \
+030420_7-4FB_10uM_EdU_Titration_S56_L002_R1_001.fastq.gz \
+030420_7-4FB_10uM_EdU_Titration_S56_L001_R1_001.fastq.gz \
+030420_7-4FB_10uM_EdU_Titration_S56_L001_R2_001.fastq.gz \
+030420_7-3FB_10uM_EdU_Titration_S55_L002_R1_001.fastq.gz \
+030420_7-3FB_10uM_EdU_Titration_S55_L002_R2_001.fastq.gz \
+030420_7-3FB_10uM_EdU_Titration_S55_L001_R1_001.fastq.gz \
+030420_7-3FB_10uM_EdU_Titration_S55_L001_R2_001.fastq.gz \
+030420_7-2FB_10uM_EdU_Titration_S54_L002_R2_001.fastq.gz \
+030420_7-2FB_10uM_EdU_Titration_S54_L002_R1_001.fastq.gz \
+030420_7-2FB_10uM_EdU_Titration_S54_L001_R2_001.fastq.gz \
+030420_7-2FB_10uM_EdU_Titration_S54_L001_R1_001.fastq.gz \
+030420_7-1FB_10uM_EdU_Titration_S53_L002_R2_001.fastq.gz \
+030420_7-1FB_10uM_EdU_Titration_S53_L002_R1_001.fastq.gz \
+030420_7-1FB_10uM_EdU_Titration_S53_L001_R2_001.fastq.gz \
+030420_7-1FB_10uM_EdU_Titration_S53_L001_R1_001.fastq.gz 
+
+cd output
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/NFW/NFW_FB_output/10xv3_whitelist.txt ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/10uM/output
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/NFW/NFW_FB_output/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/10uM/output
+mkdir featurecounts
+
+#Run BUStools
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+
+
+#Point to next files of fastqs
+cd ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/5uM
+
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/10uM/FeaturesMismatch.idx ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/5uM
+
+#Run Kallisto for pseudoalignment
+kallisto bus -i  FeaturesMismatch.idx -o output -x 10xv3 -t 4 030420_6-4FB_5uM_EdU_Titration_S52_L002_R2_001.fastq.gz \
+030420_6-4FB_5uM_EdU_Titration_S52_L002_R1_001.fastq.gz \
+030420_6-4FB_5uM_EdU_Titration_S52_L001_R1_001.fastq.gz \
+030420_6-4FB_5uM_EdU_Titration_S52_L001_R2_001.fastq.gz \
+030420_6-3FB_5uM_EdU_Titration_S51_L002_R1_001.fastq.gz \
+030420_6-3FB_5uM_EdU_Titration_S51_L002_R2_001.fastq.gz \
+030420_6-3FB_5uM_EdU_Titration_S51_L001_R1_001.fastq.gz \
+030420_6-3FB_5uM_EdU_Titration_S51_L001_R2_001.fastq.gz \
+030420_6-2FB_5uM_EdU_Titration_S50_L002_R2_001.fastq.gz \
+030420_6-2FB_5uM_EdU_Titration_S50_L002_R1_001.fastq.gz \
+030420_6-2FB_5uM_EdU_Titration_S50_L001_R2_001.fastq.gz \
+030420_6-2FB_5uM_EdU_Titration_S50_L001_R1_001.fastq.gz \
+030420_6-1FB_5uM_EdU_Titration_S49_L002_R2_001.fastq.gz \
+030420_6-1FB_5uM_EdU_Titration_S49_L002_R1_001.fastq.gz \
+030420_6-1FB_5uM_EdU_Titration_S49_L001_R2_001.fastq.gz \
+030420_6-1FB_5uM_EdU_Titration_S49_L001_R1_001.fastq.gz 
+
+#Redirect terminal to output files and make feature count dir 
+cd output
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/10uM/output/10xv3_whitelist.txt ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/5uM/output
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/10uM/output/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/5uM/output
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+#Point to next files of fastqs
+cd ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/1uM
+
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/5uM/FeaturesMismatch.idx ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/1uM
+
+kallisto bus -i  FeaturesMismatch.idx -o output -x 10xv3 -t 4 030420_5-4FB_1uM_EdU_Titration_S48_L002_R2_001.fastq.gz \
+030420_5-4FB_1uM_EdU_Titration_S48_L002_R1_001.fastq.gz \
+030420_5-4FB_1uM_EdU_Titration_S48_L001_R1_001.fastq.gz \
+030420_5-4FB_1uM_EdU_Titration_S48_L001_R2_001.fastq.gz \
+030420_5-3FB_1uM_EdU_Titration_S47_L002_R1_001.fastq.gz \
+030420_5-3FB_1uM_EdU_Titration_S47_L002_R2_001.fastq.gz \
+030420_5-3FB_1uM_EdU_Titration_S47_L001_R1_001.fastq.gz \
+030420_5-3FB_1uM_EdU_Titration_S47_L001_R2_001.fastq.gz \
+030420_5-2FB_1uM_EdU_Titration_S46_L002_R2_001.fastq.gz \
+030420_5-2FB_1uM_EdU_Titration_S46_L002_R1_001.fastq.gz \
+030420_5-2FB_1uM_EdU_Titration_S46_L001_R2_001.fastq.gz \
+030420_5-2FB_1uM_EdU_Titration_S46_L001_R1_001.fastq.gz \
+030420_5-1FB_1uM_EdU_Titration_S45_L002_R2_001.fastq.gz \
+030420_5-1FB_1uM_EdU_Titration_S45_L002_R1_001.fastq.gz \
+030420_5-1FB_1uM_EdU_Titration_S45_L001_R2_001.fastq.gz \
+030420_5-1FB_1uM_EdU_Titration_S45_L001_R1_001.fastq.gz 
+
+cd output
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/5uM/output/10xv3_whitelist.txt ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/1uM/output
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/5uM/output/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/1uM/output
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+#Point to next files of fastqs
+cd ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/0-5uM
+
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/1uM/FeaturesMismatch.idx ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/0-5uM
+
+kallisto bus -i  FeaturesMismatch.idx -o output -x 10xv3 -t 4 030420_4-4FB_0-5uM_EdU_Titration_S44_L002_R2_001.fastq.gz \
+030420_4-4FB_0-5uM_EdU_Titration_S44_L002_R1_001.fastq.gz \
+030420_4-4FB_0-5uM_EdU_Titration_S44_L001_R1_001.fastq.gz \
+030420_4-4FB_0-5uM_EdU_Titration_S44_L001_R2_001.fastq.gz \
+030420_4-3FB_0-5uM_EdU_Titration_S43_L002_R1_001.fastq.gz \
+030420_4-3FB_0-5uM_EdU_Titration_S43_L002_R2_001.fastq.gz \
+030420_4-3FB_0-5uM_EdU_Titration_S43_L001_R1_001.fastq.gz \
+030420_4-3FB_0-5uM_EdU_Titration_S43_L001_R2_001.fastq.gz \
+030420_4-2FB_0-5uM_EdU_Titration_S42_L002_R2_001.fastq.gz \
+030420_4-2FB_0-5uM_EdU_Titration_S42_L002_R1_001.fastq.gz \
+030420_4-2FB_0-5uM_EdU_Titration_S42_L001_R2_001.fastq.gz \
+030420_4-2FB_0-5uM_EdU_Titration_S42_L001_R1_001.fastq.gz \
+030420_4-1FB_0-5uM_EdU_Titration_S41_L002_R2_001.fastq.gz \
+030420_4-1FB_0-5uM_EdU_Titration_S41_L002_R1_001.fastq.gz \
+030420_4-1FB_0-5uM_EdU_Titration_S41_L001_R2_001.fastq.gz \
+030420_4-1FB_0-5uM_EdU_Titration_S41_L001_R1_001.fastq.gz 
+
+cd output
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/1uM/output/10xv3_whitelist.txt ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/0-5uM/output
+mv ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/1uM/output/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/Edu_Titration_3-12-2020/0-5uM/output
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+```
+
+
+```{r}
+plot(cars)
+```

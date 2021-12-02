@@ -1,0 +1,223 @@
+---
+title: "PrePro_RecJ"
+output: html_document
+---
+
+```{bash}
+cd Desktop/kallisto_bustools_kite/kite
+./featuremap/featuremap.py Top20.csv --header
+```
+
+
+```{bash}
+#Create mismatch
+#python featuremap.py  whitelistFeatureBarcodesTop20.csv --header
+#Create kallisto index 
+mv ~/Desktop/Preprocessing_materials_EdU/10xv3_whitelist.txt ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/No_PFA_RT
+mv ~/Desktop/Preprocessing_materials_EdU/FeaturesMismatch_top20.idx ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/No_PFA_RT
+mkdir featurecounts
+
+cd ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/No_PFA_RT
+#Run Kallisto for pseudoalignment
+kallisto bus -i  FeaturesMismatch_top20.idx -o output_FB -x 10xv3 -t 4 \
+No_PFA_RT_feature_a_S33_L001_R1_001.fastq.gz \
+No_PFA_RT_feature_a_S33_L001_R2_001.fastq.gz \
+No_PFA_RT_feature_a_S33_L002_R1_001.fastq.gz \
+No_PFA_RT_feature_a_S33_L002_R2_001.fastq.gz \
+No_PFA_RT_feature_b_S34_L001_R1_001.fastq.gz \
+No_PFA_RT_feature_b_S34_L001_R2_001.fastq.gz \
+No_PFA_RT_feature_b_S34_L002_R1_001.fastq.gz \
+No_PFA_RT_feature_b_S34_L002_R2_001.fastq.gz \
+No_PFA_RT_feature_c_S35_L001_R1_001.fastq.gz \
+No_PFA_RT_feature_c_S35_L001_R2_001.fastq.gz \
+No_PFA_RT_feature_c_S35_L002_R1_001.fastq.gz \
+No_PFA_RT_feature_c_S35_L002_R2_001.fastq.gz \
+No_PFA_RT_feature_d_S36_L001_R1_001.fastq.gz \
+No_PFA_RT_feature_d_S36_L001_R2_001.fastq.gz \
+No_PFA_RT_feature_d_S36_L002_R1_001.fastq.gz \
+No_PFA_RT_feature_d_S36_L002_R2_001.fastq.gz
+
+cd output_FB
+mv ~/Desktop/Preprocessing_materials_EdU/10xv3_whitelist.txt ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/No_PFA_RT/output
+mv ~/Desktop/Preprocessing_materials_EdU/FB/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/No_PFA_RT/output_FB/FeaturesMismatch_top20.t2g
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g FeaturesMismatch_Top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+#Point to next files of fastqs
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/No_PFA_RT/Top_20_FeaturesMismatch.idx ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/240U_RecJ
+
+cd -
+
+cd ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/240U_RecJ
+
+kallisto bus -i  Top_20_FeaturesMismatch.idx -o output_FB -x 10xv3 -t 4 \
+240U_RecJ_feature_a_S37_L001_R1_001.fastq.gz \
+240U_RecJ_feature_a_S37_L001_R2_001.fastq.gz \
+240U_RecJ_feature_a_S37_L002_R1_001.fastq.gz \
+240U_RecJ_feature_a_S37_L002_R2_001.fastq.gz \
+240U_RecJ_feature_b_S38_L001_R1_001.fastq.gz \
+240U_RecJ_feature_b_S38_L001_R2_001.fastq.gz \
+240U_RecJ_feature_b_S38_L002_R1_001.fastq.gz \
+240U_RecJ_feature_b_S38_L002_R2_001.fastq.gz \
+240U_RecJ_feature_c_S39_L001_R1_001.fastq.gz \
+240U_RecJ_feature_c_S39_L001_R2_001.fastq.gz \
+240U_RecJ_feature_c_S39_L002_R1_001.fastq.gz \
+240U_RecJ_feature_c_S39_L002_R2_001.fastq.gz \
+240U_RecJ_feature_d_S40_L001_R1_001.fastq.gz \
+240U_RecJ_feature_d_S40_L001_R2_001.fastq.gz \
+240U_RecJ_feature_d_S40_L002_R1_001.fastq.gz \
+240U_RecJ_feature_d_S40_L002_R2_001.fastq.gz
+
+cd output
+
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/No_PFA_RT/output_FB/10xv3_whitelist.txt ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/240U_RecJ/output_FB
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/No_PFA_RT/output_FB/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/240U_RecJ/output_FB
+mkdir featurecounts
+
+#Run BUStools
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g FeaturesMismatch_Top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+cd -
+
+#Point to next files of fastqs
+cd ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/480U_RecJ
+
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/240U_RecJ/Top_20_FeaturesMismatch.idx ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/480U_RecJ
+
+#Run Kallisto for pseudoalignment
+kallisto bus -i  Top_20_FeaturesMismatch.idx -o output_FB -x 10xv3 -t 4 \
+480U_RecJ_feature_a_S41_L001_R1_001.fastq.gz \
+480U_RecJ_feature_a_S41_L001_R1_001.fastq.gz \
+480U_RecJ_feature_a_S41_L002_R1_001.fastq.gz \
+480U_RecJ_feature_a_S41_L002_R2_001.fastq.gz \
+480U_RecJ_feature_b_S42_L001_R1_001.fastq.gz \
+480U_RecJ_feature_b_S42_L001_R2_001.fastq.gz \
+480U_RecJ_feature_b_S42_L002_R1_001.fastq.gz \
+480U_RecJ_feature_b_S42_L002_R2_001.fastq.gz \
+480U_RecJ_feature_c_S43_L001_R1_001.fastq.gz \
+480U_RecJ_feature_c_S43_L001_R2_001.fastq.gz \
+480U_RecJ_feature_c_S43_L002_R1_001.fastq.gz \
+480U_RecJ_feature_c_S43_L002_R2_001.fastq.gz \
+480U_RecJ_feature_d_S44_L001_R1_001.fastq.gz \
+480U_RecJ_feature_d_S44_L001_R2_001.fastq.gz \
+480U_RecJ_feature_d_S44_L002_R1_001.fastq.gz \
+480U_RecJ_feature_d_S44_L002_R2_001.fastq.gz 
+
+#Redirect terminal to output files and make feature count dir 
+cd output_FB
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/240U_RecJ/output_FB/10xv3_whitelist.txt ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/480U_RecJ/output_FB
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/240U_RecJ/output_FB/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/480U_RecJ/output_FB
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+#Point to next files of fastqs
+cd ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/NoEdU_240U_RecJ
+
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/480U_RecJ/Top_20_FeaturesMismatch.idx ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/NoEdU_240U_RecJ
+
+kallisto bus -i  Top_20_FeaturesMismatch.idx -o output -x 10xv3 -t 4 \
+NoEdU_240U_RecJ_feature_a_S45_L001_R1_001.fastq.gz \
+NoEdU_240U_RecJ_feature_a_S45_L001_R2_001.fastq.gz \
+NoEdU_240U_RecJ_feature_a_S45_L002_R1_001.fastq.gz \
+NoEdU_240U_RecJ_feature_a_S45_L002_R2_001.fastq.gz \
+NoEdU_240U_RecJ_feature_b_S46_L001_R1_001.fastq.gz \
+NoEdU_240U_RecJ_feature_b_S46_L001_R2_001.fastq.gz \
+NoEdU_240U_RecJ_feature_b_S46_L002_R1_001.fastq.gz \
+NoEdU_240U_RecJ_feature_b_S46_L002_R2_001.fastq.gz \
+NoEdU_240U_RecJ_feature_c_S47_L001_R1_001.fastq.gz \
+NoEdU_240U_RecJ_feature_c_S47_L001_R2_001.fastq.gz \
+NoEdU_240U_RecJ_feature_c_S47_L002_R1_001.fastq.gz \
+NoEdU_240U_RecJ_feature_c_S47_L002_R2_001.fastq.gz \
+NoEdU_240U_RecJ_feature_d_S48_L001_R1_001.fastq.gz \
+NoEdU_240U_RecJ_feature_d_S48_L001_R2_001.fastq.gz \
+NoEdU_240U_RecJ_feature_d_S48_L002_R1_001.fastq.gz \
+NoEdU_240U_RecJ_feature_d_S48_L002_R2_001.fastq.gz
+
+cd output
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/480U_RecJ/output_FB/10xv3_whitelist.txt ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/NoEdU_240U_RecJ/output
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/480U_RecJ/output_FB/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/NoEdU_240U_RecJ/output
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+#Point to next files of fastqs
+cd ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_Cold
+
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/NoEdU_240U_RecJ/Top_20_FeaturesMismatch.idx ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_Cold
+
+kallisto bus -i Top_20_FeaturesMismatch.idx -o output_FB -x 10xv3 -t 4 \
+PFA_Cold_feature_a_S25_L001_R1_001.fastq.gz \
+PFA_Cold_feature_a_S25_L001_R2_001.fastq.gz \
+PFA_Cold_feature_a_S25_L002_R1_001.fastq.gz \
+PFA_Cold_feature_a_S25_L002_R2_001.fastq.gz \
+PFA_Cold_feature_b_S26_L001_R1_001.fastq.gz \
+PFA_Cold_feature_b_S26_L001_R2_001.fastq.gz \
+PFA_Cold_feature_b_S26_L002_R1_001.fastq.gz \
+PFA_Cold_feature_b_S26_L002_R2_001.fastq.gz \
+PFA_Cold_feature_c_S27_L001_R1_001.fastq.gz \
+PFA_Cold_feature_c_S27_L001_R2_001.fastq.gz \
+PFA_Cold_feature_c_S27_L002_R1_001.fastq.gz \
+PFA_Cold_feature_c_S27_L002_R2_001.fastq.gz \
+PFA_Cold_feature_d_S28_L001_R1_001.fastq.gz \
+PFA_Cold_feature_d_S28_L001_R2_001.fastq.gz \
+PFA_Cold_feature_d_S28_L002_R1_001.fastq.gz \
+PFA_Cold_feature_d_S28_L002_R2_001.fastq.gz
+
+cd output_FB
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/NoEdU_240U_RecJ/output_FB/10xv3_whitelist.txt ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_Cold/output_FB
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/NoEdU_240U_RecJ/output_FB/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_Cold/output_FB
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+#Point to next files of fastqs
+cd ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_RT
+
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_Cold/Top_20_FeaturesMismatch.idx ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_RT
+
+kallisto bus -i Top_20_FeaturesMismatch.idx -o output -x 10xv3 -t 4 \
+PFA_RT_feature_a_S29_L001_R1_001.fastq.gz \
+PFA_RT_feature_a_S29_L001_R2_001.fastq.gz \
+PFA_RT_feature_a_S29_L002_R1_001.fastq.gz \
+PFA_RT_feature_a_S29_L002_R2_001.fastq.gz \
+PFA_RT_feature_b_S30_L001_R1_001.fastq.gz \
+PFA_RT_feature_b_S30_L001_R2_001.fastq.gz \
+PFA_RT_feature_b_S30_L002_R1_001.fastq.gz \
+PFA_RT_feature_b_S30_L002_R2_001.fastq.gz \
+PFA_RT_feature_c_S31_L001_R1_001.fastq.gz \
+PFA_RT_feature_c_S31_L001_R2_001.fastq.gz \
+PFA_RT_feature_c_S31_L002_R1_001.fastq.gz \
+PFA_RT_feature_c_S31_L002_R2_001.fastq.gz \
+PFA_RT_feature_d_S32_L001_R1_001.fastq.gz \
+PFA_RT_feature_d_S32_L001_R2_001.fastq.gz \
+PFA_RT_feature_d_S32_L002_R1_001.fastq.gz \
+PFA_RT_feature_d_S32_L002_R2_001.fastq.gz
+
+cd output
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_Cold/output_FB/10xv3_whitelist.txt ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_RT/output
+mv ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_Cold/output_FB/FeaturesMismatch_top20.t2g ~/Desktop/EdU_Titration/aperez_Edu-Seq_RecJ_08202020_166623/PFA_RT/output
+mkdir featurecounts
+
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./featurecounts/featurecounts --genecounts -g ./FeaturesMismatch_top20.t2g -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+
+
+mkdir genecounts
+bustools correct -w  10xv3_whitelist.txt  output.bus -o  output_corrected.bus
+bustools sort -t 4 -o  output_sorted.bus  output_corrected.bus
+bustools count -o ./genecounts --genecounts -g ./transcripts_to_genes.txt -e ./matrix.ec -t ./transcripts.txt ./output_sorted.bus
+```
+

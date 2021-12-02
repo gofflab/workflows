@@ -1,0 +1,16 @@
+params {
+  refBase = "/reference/genomes/mouse/gencode/vM27"
+  refGenome = file("$params.refBase/GRCm39.primary_assembly.genome.fa.gz")
+  refGTF = file("$params.refBase/gencode.vM27.annotation.gtf.gz")
+  indexDir = "/mnt/morbo/Data/indexes"
+
+  dev = false
+  number_of_inputs = 4
+}
+
+process {
+  executor='slurm'
+  queue = 'general'
+  pollInterval = '1 min'
+  queueStatInterval = '2 min'
+}
